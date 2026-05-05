@@ -1,41 +1,51 @@
 import { Router } from "express";
 import { getAllNotebooks } from "../services/notebookServices.js";
 
-  const router = Router();
+const router = Router();
 
 
 router.get("/notebooks", async (req, res) => {
-  try{
+  try {
     const notebooks = await getAllNotebooks()
     res.json(notebooks)
-  }catch (error) {
-    res.status(500).json({error: error.message})
+  } catch (error) {
+    res.status(500).json({ error: error.message })
   }
 });
 
-  router.get("/notebooks/:id",  async (req, res) => {
+router.get("/notebooks/:id", async (req, res) => {
 
-    const { id } = Number(req.params.id);
-    try{
-      const result = await pool.query(
-        "SELECT * FROM user WHERE  id = $1",
-        [idUsuario]
-      )
-      const usuario = result.rows[0]
+  const idNotebook = Number(req.params.id)
 
-      return res.status(200).json(usuario)
-      
-    }catch{
+  try {
 
+    const result = await pool.query(
+      "SELECT * FROM notebooks WHERE  id = $1",
+      [idNotebook]
+    )
+    const notebook = result.rows[0]
+
+    if (!notebook) {
+      return res.status(404).json({ message: "Notebook não encontrado" })
     }
 
+    return res.status(200).json(notebook)
 
-  });
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+});
 
 
-  router.post("/notebooks", (req, res) =>{
-    
-  })
+router.post("/notebooks", async (req, res) => {
+  const { marca, modelo, preco, estoque, descricao } = req.body
+  const [rows] = await pool.query(
+    "INSERT INTO notebooks (marca, modelo, preco, estoque, descricao) VALUES ($1, $2, $3, $4, $5)",
+    [marca, modelo, preco, estoque, descricao]
+  )
+  console.log(rows)
+  return res.status(201).json({message: "Notebook adicionado com sucesso!"})
+})
 
 
 
