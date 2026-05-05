@@ -1,3 +1,6 @@
+
+import app from "./app.js"
+
 const app = express();
 
 app.use(cors());
