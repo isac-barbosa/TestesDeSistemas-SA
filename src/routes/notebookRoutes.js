@@ -1,30 +1,25 @@
 import { Router } from "express";
-import { getAllNotebooks } from "../services/notebookServices.js";
+import { createNotebook, getAllNotebooks, getNotebookById, updateNotebook } from "../services/notebookServices.js";
 
 const router = Router();
 
 
-router.get("/notebooks", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const notebooks = await getAllNotebooks()
-    res.json(notebooks)
+    res.status(200).json(notebooks)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error.message })
   }
 });
 
-router.get("/notebooks/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
 
   const idNotebook = Number(req.params.id)
 
   try {
 
-    const result = await pool.query(
-      "SELECT * FROM notebooks WHERE  id = $1",
-      [idNotebook]
-    )
-    const notebook = result.rows[0]
-
+    const notebook = await getNotebookById(idNotebook)
     if (!notebook) {
       return res.status(404).json({ message: "Notebook não encontrado" })
     }
@@ -32,22 +27,47 @@ router.get("/notebooks/:id", async (req, res) => {
     return res.status(200).json(notebook)
 
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ 
+      error: error.message 
+    })
   }
 });
 
-
-router.post("/notebooks", async (req, res) => {
-  const { marca, modelo, preco, estoque, descricao } = req.body
-  const [rows] = await pool.query(
-    "INSERT INTO notebooks (marca, modelo, preco, estoque, descricao) VALUES ($1, $2, $3, $4, $5)",
-    [marca, modelo, preco, estoque, descricao]
-  )
-  console.log(rows)
-  return res.status(201).json({message: "Notebook adicionado com sucesso!"})
+router.post("/", async (req, res) => {
+   console.log("ROTA POST FUNCIONOU")
+  try {
+    const notebook = await createNotebook(req.body)
+    return res.status(201).json(notebook)
+    console.log(notebook)
+  }
+  catch (error) {
+    return res.status(500).json({
+      error: error.message 
+    })
+    
+  }
 })
 
+router.put("/:id", async (req, res) =>{
+  const idNotebook = Number(req.params.id)
 
+    try{
+      const notebookExistente = await getNotebookById(idNotebook, req.body)
 
+      if(!notebookExistente){
+        return res.status(404).json({ message: "Notebook não encontrado" })
+      }
+
+        await updateNotebook(idNotebook, req.body)
+        return res.status(200).json({
+          message: "Notebook atualizado com sucesso"
+        })
+    }
+    catch(error) {
+      return res.status(500).json({
+        error: error.message
+      })
+    }
+})
 
 export default router;
