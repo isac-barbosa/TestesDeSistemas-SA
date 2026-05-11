@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createNotebook, getAllNotebooks, getNotebookById, updateNotebook } from "../services/notebookServices.js";
+import { createNotebook, getAllNotebooks, getNotebookById, updateNotebook, deleteNotebook } from "../services/notebookServices.js";
 
 const router = Router();
 
@@ -68,6 +68,27 @@ router.put("/:id", async (req, res) =>{
         error: error.message
       })
     }
+})
+
+router.delete("/:id", async (req, res) => {
+  const idNotebook = Number(req.params.id)
+
+  try {
+    const notebookExistente = await getNotebookById(idNotebook)
+    if (!notebookExistente) {
+
+      return res.status(404).json({ message: "Notebook não encontrado" })
+      
+    }
+
+    await deleteNotebook(idNotebook)
+    return res.status(200).json({ message: "Notebook deleteado com sucesso" })
+
+    }catch (error){
+    return res.status(500).json({
+      error: error.message
+    })
+  }
 })
 
 export default router;

@@ -60,3 +60,17 @@ export const updateNotebook = async (id, {
         console.log("Erro ao atualizar notebook", error)
     }
 }
+
+export const deleteNotebook = async (id) => {
+    try {
+         await pool.query(
+             `DELETE FROM notebooks WHERE id = $1`,
+             [id]
+         )
+        return { message: "Notebook deletado com sucesso!"}
+        
+    } catch (error) {
+        console.log("Erro ao deletar notebook", error)
+        
+    }
+}
