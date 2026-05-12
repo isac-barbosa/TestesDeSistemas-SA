@@ -25,8 +25,8 @@ export const loginUser = async ({ email, senha }) => {
 
     try {
         const result = await pool.query(
-            "SELECT * FROM usuarios WHERE email = $1",
-            [email]
+            "SELECT * FROM usuarios WHERE email = $1 AND senha = $2",
+            [email, senha]
         )
         const usuario = result.rows[0]
         if (!usuario) {
@@ -36,7 +36,8 @@ export const loginUser = async ({ email, senha }) => {
             return null
         }
         return {
-            message: "Login realizado com sucesso"
+            message: "Login realizado com sucesso",
+            usuario
         }
     } catch (error) {
         console.log("Erro ao fazer login", error)

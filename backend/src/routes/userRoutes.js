@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createUser, loginUser } from "../services/userServices.js";
 
+
 const router = Router();
 
 router.post("/cadastro", async (req, res) => {
