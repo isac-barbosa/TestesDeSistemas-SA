@@ -43,14 +43,13 @@ function Login() {
                 className="login-card"
                 onSubmit={handleLogin}
             >
-
                 <h1>
                     Tech <span>Wave</span>
                 </h1>
-
                 <input
                     type="email"
                     placeholder="Digite seu email"
+                    data-testid="email-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -58,11 +57,12 @@ function Login() {
                 <input
                     type="password"
                     placeholder="Digite sua senha"
+                    data-testid="senha-input"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                 />
 
-                <button type="submit">
+                <button type="submit" data-testid="login-button">
                     Entrar
                 </button>
 

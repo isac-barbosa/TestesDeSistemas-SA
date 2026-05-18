@@ -77,14 +77,16 @@ router.delete("/:id", async (req, res) => {
     const notebookExistente = await getNotebookById(idNotebook)
     if (!notebookExistente) {
 
-      return res.status(404).json({ message: "Notebook não encontrado" })
+      return res.status(404).json(
+        { message: "Notebook não encontrado" })
       
-    }
+    } await deleteNotebook(idNotebook) 
 
-    await deleteNotebook(idNotebook)
-    return res.status(200).json({ message: "Notebook deleteado com sucesso" })
+    return res.status(200).json(
+      { message: "Notebook deleteado com sucesso" })
 
     }catch (error){
+      
     return res.status(500).json({
       error: error.message
     })
