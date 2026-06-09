@@ -28,7 +28,12 @@ export const loginUser = async ({ email, senha }) => {
             "SELECT * FROM usuarios WHERE email = $1 AND senha = $2",
             [email, senha]
         )
+        console.log("Email:", email)
+        console.log("Senha:", senha)
+        console.log("Resultado:", result.rows)
+
         const usuario = result.rows[0]
+
         if (!usuario) {
             return null
         }

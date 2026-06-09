@@ -4,11 +4,12 @@ import { createUser, loginUser } from "../services/userServices.js";
 
 const router = Router();
 
-router.post("/cadastro", async (req, res) => {
+router.post("/", async (req, res) => {
 
     try {
         const user = await createUser(req.body)
-        return res.status(201).json(user)
+        return res.status(201).json({user, 
+        "message": "Usuário cadastrado com sucesso"})
 
     } catch (error) {
         return res.status(500).json({
