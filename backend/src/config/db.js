@@ -13,4 +13,10 @@ export const pool = new Pool({
   queueLimit: 0,
 });
 
-
+pool.query("SELECT current_database()")
+    .then(result => {
+        console.log("Banco conectado:", result.rows[0].current_database)
+    })
+    .catch(err => {
+        console.log("Erro ao conectar:", err)
+    })

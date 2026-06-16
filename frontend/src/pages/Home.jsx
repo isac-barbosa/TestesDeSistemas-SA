@@ -1,19 +1,24 @@
 import { useState, useEffect } from "react"
 import "../styles/Home.css"
 import api from "../services/api"
+import { useNavigate } from "react-router-dom"
 
 function Home() {
+
+    const navigate = useNavigate()
 
     const [notebooks, setNotebooks] = useState([])
 
     const [search, setSearch] = useState("")
     const [priceFilter, setPriceFilter] = useState("")
-
+    const [notebookSelecionado, setNotebookSelecionado] = useState(null)
+    const [mostrarModal, setMostrarModal] = useState(false)
     const [marca, setMarca] = useState("")
     const [modelo, setModelo] = useState("")
     const [preco, setPreco] = useState("")
     const [estoque, setEstoque] = useState("")
     const [descricao, setDescricao] = useState("")
+    const [imagem, setImagem] = useState("")
     const [editarNotebookId, setEditarNotebookId] = useState(null)
 
 
@@ -51,7 +56,8 @@ function Home() {
                 modelo,
                 preco: Number(preco),
                 estoque: Number(estoque),
-                descricao
+                descricao,
+                imagem
             }
 
             // UPDATE
@@ -84,7 +90,7 @@ function Home() {
             setPreco("")
             setEstoque("")
             setDescricao("")
-
+            setImagem("")
             setEditarNotebookId(null)
 
             getNotebooks()
@@ -104,6 +110,7 @@ function Home() {
         setPreco(notebook.preco)
         setEstoque(notebook.estoque)
         setDescricao(notebook.descricao)
+        setImagem(notebook.imagem)
 
     }
     async function handleDeleteNotebook(id) {
@@ -145,6 +152,30 @@ function Home() {
 
     console.log(marca)
 
+
+    function handleViewNotebook(notebook) {
+
+        setNotebookSelecionado(notebook)
+        setMostrarModal(true)
+
+    }
+
+
+
+    function handleLogout() {
+
+        const confirmar = window.confirm(
+            "Deseja realmente sair?"
+        )
+
+        if (confirmar) {
+
+            navigate("/")
+
+        }
+
+    }
+
     return (
 
         <div className="home-container">
@@ -157,7 +188,10 @@ function Home() {
                     </h1>
                 </div>
 
-                <button className="logout-btn">
+                <button
+                    className="logout-btn"
+                    onClick={handleLogout}
+                >
                     Sair
                 </button>
 
@@ -193,7 +227,10 @@ function Home() {
                             filteredNotebooks.map((notebook) => (
                                 <div className="card" key={notebook.id}>
                                     <img
-                                        src={notebook.imagem}
+                                        src={
+                                            notebook.imagem ||
+                                            "https://via.placeholder.com/300x200?text=Notebook"
+                                        }
                                         alt={notebook.modelo}
                                     />
                                     <div className="card-content">
@@ -206,6 +243,15 @@ function Home() {
                                         <p className="price">
                                             R$ {notebook.preco}
                                         </p>
+
+                                        <button
+                                            className="view-btn"
+                                            onClick={() => handleViewNotebook(notebook)}
+                                        >
+                                            Ver Mais
+                                        </button>
+
+
                                         <button
                                             className="edit-btn"
                                             onClick={() => handleEditNotebook(notebook)}
@@ -267,6 +313,15 @@ function Home() {
                             value={descricao}
                             onChange={(e) => setDescricao(e.target.value)}
                         ></textarea>
+
+                        <input
+                            type="text"
+                            placeholder="URL da imagem"
+                            value={imagem}
+                            onChange={(e) => setImagem(e.target.value)}
+                        />
+
+
                         <button type="submit">
                             {
                                 editarNotebookId
@@ -277,6 +332,67 @@ function Home() {
                     </form>
                 </div>
             </div>
+
+            {
+                mostrarModal && notebookSelecionado && (
+
+                    <div
+                        className="modal-overlay"
+                        onClick={() => setMostrarModal(false)}
+                    >
+
+                        <div
+                            className="modal-content"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+
+                            <img
+                                src={notebookSelecionado.imagem}
+                                alt={notebookSelecionado.modelo}
+                            />
+
+                            <h2>
+                                {notebookSelecionado.modelo}
+                            </h2>
+
+                            <p>
+                                <strong>Marca:</strong>
+                                {" "}
+                                {notebookSelecionado.marca}
+                            </p>
+
+                            <p>
+                                <strong>Preço:</strong>
+                                {" "}
+                                R$ {notebookSelecionado.preco}
+                            </p>
+
+                            <p>
+                                <strong>Estoque:</strong>
+                                {" "}
+                                {notebookSelecionado.estoque}
+                            </p>
+
+                            <p>
+                                <strong>Descrição:</strong>
+                                {" "}
+                                {notebookSelecionado.descricao}
+                            </p>
+
+                            <button
+                                onClick={() => setMostrarModal(false)}
+                            >
+                                Fechar
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                )
+            }
+
+
         </div>
     )
 }

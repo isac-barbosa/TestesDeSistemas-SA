@@ -27,13 +27,13 @@ export const createNotebook = async ({
     modelo,
     preco,
     estoque,
-    descricao
-
+    descricao,
+    imagem
 }) => {
     try {
         await pool.query(
-            `INSERT INTO notebooks (marca, modelo, preco, estoque, descricao) VALUES ($1, $2, $3, $4, $5) `,
-            [marca, modelo, preco, estoque, descricao]
+            `INSERT INTO notebooks (marca, modelo, preco, estoque, descricao, imagem) VALUES ($1, $2, $3, $4, $5, $6) `,
+            [marca, modelo, preco, estoque, descricao, imagem]
         )
         return {message: "Notebook adicionado com sucesso!"}
 
@@ -48,11 +48,12 @@ export const updateNotebook = async (id, {
     modelo,
     preco,
     estoque,
-    descricao
+    descricao,
+    imagem
 }) => {
     try{
         const result = await pool.query(
-            `UPDATE notebooks SET marca = $1, modelo = $2, preco = $3, estoque = $4, descricao = $5 WHERE id = $6`,
+            `UPDATE notebooks SET marca = $1, modelo = $2, preco = $3, estoque = $4, descricao = $5, imagem = $6 WHERE id = $7`,
             [marca, modelo, preco, estoque, descricao, id]
         )
         return { message: "Notebook atualizado com sucesso!"}

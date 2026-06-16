@@ -1,23 +1,36 @@
 import { pool } from "../config/db.js";
 
-export const createUser = async ({
+ export const createUser = async ({
     nome,
     email,
     senha
 }) => {
 
     try {
-        await pool.query(
-            `INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) `,
+
+        console.log("Recebido:", {
+            nome,
+            email,
+            senha
+        })
+
+        const result = await pool.query(
+            `INSERT INTO usuarios (nome, email, senha)
+             VALUES ($1, $2, $3)
+             RETURNING *`,
             [nome, email, senha]
         )
-        return {
-            message: "Usuário cadastrado com sucesso"
-        }
-    } catch (error) {
-        console.log("Erro ao cadastrar usuário", error)
-    }
 
+        console.log("Usuário criado:", result.rows[0])
+
+        return result.rows[0]
+
+    } catch (error) {
+
+        console.log("Erro ao cadastrar usuário", error)
+
+        throw error
+    }
 }
 
 

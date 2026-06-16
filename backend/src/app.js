@@ -11,7 +11,7 @@ app.use(express.json())
 
 // rotas
 app.use("/notebooks", notebookRoutes),
-app.use("/usuario", userRoutes)
+app.use("/usuarios", userRoutes)
 
 app.get("/", (req, res) =>{
     res.send("Bem vindo á API de Notebooks")

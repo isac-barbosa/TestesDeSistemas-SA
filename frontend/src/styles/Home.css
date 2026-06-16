@@ -141,8 +141,6 @@ body{
 
   border-radius: 20px;
 
-  overflow: hidden;
-
   border: 1px solid rgba(255,255,255,0.08);
 
   transition: 0.3s;
@@ -153,13 +151,6 @@ body{
 
   box-shadow:
     0px 10px 30px rgba(0,0,0,0.3);
-}
-
-.card img{
-  width: 100%;
-  height: 220px;
-
-  object-fit: cover;
 }
 
 .card-content{
@@ -298,4 +289,112 @@ body{
 
 .edit-btn:hover{
   background: #1d4ed8;
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 20px 20px 0 0;
+}
+
+
+html,
+body {
+  overflow-y: auto;
+}
+
+.home-container {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+
+.view-btn{
+
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #0ea5e9;
+
+  color: white;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.modal-overlay{
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.7);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.modal-content{
+
+  width: 600px;
+  max-width: 90%;
+
+  background: #111827;
+
+  border-radius: 20px;
+
+  padding: 30px;
+
+  color: white;
+}
+
+.modal-content img{
+
+  width: 100%;
+  height: 300px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+
+  margin-bottom: 20px;
+}
+
+.modal-content h2{
+
+  margin-bottom: 20px;
+}
+
+.modal-content p{
+
+  margin-bottom: 12px;
+}
+
+.modal-content button{
+
+  width: 100%;
+  margin-top: 20px;
+
+  padding: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #2563eb;
+
+  color: white;
+
+  cursor: pointer;
 }

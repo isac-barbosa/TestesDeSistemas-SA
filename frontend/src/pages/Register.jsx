@@ -3,87 +3,88 @@ import { useNavigate } from "react-router-dom"
 import api from "../services/api"
 import "../styles/login.css"
 
+function Register() {
 
-function Login() {
-
+    const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
 
     const navigate = useNavigate()
 
-    async function handleLogin(e) {
+    async function handleRegister(e) {
 
         e.preventDefault()
 
         try {
-            console.log({
-                email,
-                senha
-            })
 
-            const response = await api.post("/usuarios/login", {
+            const response = await api.post("/usuarios", {
+                nome,
                 email,
                 senha
             })
 
             alert(response.data.message)
 
-            navigate("/home")
+            navigate("/")
 
         } catch (error) {
 
-            alert("Email ou senha inválidos")
-
             console.log(error)
+
+            alert("Erro ao cadastrar usuário")
 
         }
 
     }
 
     return (
-
         <div className="login-container">
 
             <form
                 className="login-card"
-                onSubmit={handleLogin}
+                onSubmit={handleRegister}
             >
+
                 <h1>
-                    Tech <span>Wave</span>
+                    Criar Conta
                 </h1>
+
+                <input
+                    type="text"
+                    placeholder="Nome"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                />
+
                 <input
                     type="email"
-                    placeholder="Digite seu email"
-                    data-testid="email-input"
+                    placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <input
                     type="password"
-                    placeholder="Digite sua senha"
-                    data-testid="senha-input"
+                    placeholder="Senha"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                 />
 
-                <button type="submit" data-testid="login-button">
-                    Entrar
+                <button type="submit">
+                    Cadastrar
                 </button>
 
                 <p
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/cadastro")}
+                    onClick={() => navigate("/")}
                 >
-                    Não possui conta? Cadastre-se
+                    Já possui conta? Entrar
                 </p>
 
             </form>
 
         </div>
-
     )
-
 }
 
-export default Login
+export default Register
