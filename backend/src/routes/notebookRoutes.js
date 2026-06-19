@@ -37,8 +37,8 @@ router.post("/", async (req, res) => {
    console.log("ROTA POST FUNCIONOU")
   try {
     const notebook = await createNotebook(req.body)
-    return res.status(201).json(notebook)
     console.log(notebook)
+    return res.status(201).json(notebook)
   }
   catch (error) {
     return res.status(500).json({

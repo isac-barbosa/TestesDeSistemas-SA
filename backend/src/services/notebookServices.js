@@ -49,12 +49,12 @@ export const updateNotebook = async (id, {
     preco,
     estoque,
     descricao,
-    imagem
+    imagem  
 }) => {
     try{
         const result = await pool.query(
             `UPDATE notebooks SET marca = $1, modelo = $2, preco = $3, estoque = $4, descricao = $5, imagem = $6 WHERE id = $7`,
-            [marca, modelo, preco, estoque, descricao, id]
+            [marca, modelo, preco, estoque, descricao, imagem, id]
         )
         return { message: "Notebook atualizado com sucesso!"}
     }catch (error){
