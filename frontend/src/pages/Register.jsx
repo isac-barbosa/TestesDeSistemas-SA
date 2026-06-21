@@ -23,7 +23,7 @@ function Register() {
                 senha
             })
 
-            alert(response.data.message)
+            alert(response.data.message || "Usuário cadastrado com sucesso!")
 
             navigate("/")
 
@@ -38,6 +38,7 @@ function Register() {
     }
 
     return (
+
         <div className="login-container">
 
             <form
@@ -52,29 +53,39 @@ function Register() {
                 <input
                     type="text"
                     placeholder="Nome"
+                    data-testid="register-nome"
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
+                    required
                 />
 
                 <input
                     type="email"
                     placeholder="Email"
+                    data-testid="register-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                 />
 
                 <input
                     type="password"
                     placeholder="Senha"
+                    data-testid="register-senha"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    required
                 />
 
-                <button type="submit">
+                <button
+                    type="submit"
+                    data-testid="register-button"
+                >
                     Cadastrar
                 </button>
 
                 <p
+                    data-testid="back-login-button"
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate("/")}
                 >
@@ -84,7 +95,9 @@ function Register() {
             </form>
 
         </div>
+
     )
+
 }
 
 export default Register

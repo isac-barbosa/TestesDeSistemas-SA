@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom"
 import api from "../services/api"
 import "../styles/login.css"
 
-
 function Login() {
 
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
+    const [erro, setErro] = useState("")
 
     const navigate = useNavigate()
 
@@ -16,11 +16,6 @@ function Login() {
         e.preventDefault()
 
         try {
-            console.log({
-                email,
-                senha
-            })
-
             const response = await api.post("/usuarios/login", {
                 email,
                 senha
@@ -31,11 +26,8 @@ function Login() {
             navigate("/home")
 
         } catch (error) {
-
-            alert("Email ou senha inválidos")
-
             console.log(error)
-
+            setErro("Email ou senha inválidos")
         }
 
     }
@@ -48,15 +40,18 @@ function Login() {
                 className="login-card"
                 onSubmit={handleLogin}
             >
+
                 <h1>
                     Tech <span>Wave</span>
                 </h1>
+
                 <input
                     type="email"
                     placeholder="Digite seu email"
                     data-testid="email-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                 />
 
                 <input
@@ -65,19 +60,28 @@ function Login() {
                     data-testid="senha-input"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    required
                 />
 
-                <button type="submit" data-testid="login-button">
+                <button
+                    type="submit"
+                    data-testid="login-button"
+                >
                     Entrar
                 </button>
 
                 <p
+                    data-testid="register-link"
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate("/cadastro")}
                 >
                     Não possui conta? Cadastre-se
                 </p>
-
+                {erro && (
+                    <p data-testid="login-error">
+                        {erro}
+                    </p>
+                )}
             </form>
 
         </div>

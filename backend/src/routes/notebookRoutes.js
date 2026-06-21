@@ -71,26 +71,39 @@ router.put("/:id", async (req, res) =>{
 })
 
 router.delete("/:id", async (req, res) => {
-  const idNotebook = Number(req.params.id)
 
-  try {
-    const notebookExistente = await getNotebookById(idNotebook)
-    if (!notebookExistente) {
+    const idNotebook = Number(req.params.id)
 
-      return res.status(404).json(
-        { message: "Notebook não encontrado" })
-      
-    } await deleteNotebook(idNotebook) 
+    try {
 
-    return res.status(200).json(
-      { message: "Notebook deleteado com sucesso" })
+        console.log("DELETE recebido:", idNotebook)
 
-    }catch (error){
-      
-    return res.status(500).json({
-      error: error.message
-    })
-  }
+        const notebookExistente = await getNotebookById(idNotebook)
+
+        if (!notebookExistente) {
+            return res.status(404).json({
+                message: "Notebook não encontrado"
+            })
+        }
+
+        const notebook = await deleteNotebook(idNotebook)
+
+        console.log("Notebook excluído:", notebook)
+
+        return res.status(200).json({
+            message: "Notebook deletado com sucesso"
+        })
+
+    } catch (error) {
+
+        console.log(error)
+
+        return res.status(500).json({
+            error: error.message
+        })
+
+    }
+
 })
 
 export default router;

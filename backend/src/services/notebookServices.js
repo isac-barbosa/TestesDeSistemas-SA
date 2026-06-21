@@ -64,14 +64,22 @@ export const updateNotebook = async (id, {
 
 export const deleteNotebook = async (id) => {
     try {
-         await pool.query(
-             `DELETE FROM notebooks WHERE id = $1`,
-             [id]
-         )
-        return { message: "Notebook deletado com sucesso!"}
-        
+
+        console.log("ID recebido para excluir:", id)
+
+        const result = await pool.query(
+            "DELETE FROM notebooks WHERE id = $1 RETURNING *",
+            [id]
+        )
+
+        console.log("DELETE:", result.rows)
+
+        return result.rows[0]
+
     } catch (error) {
+
         console.log("Erro ao deletar notebook", error)
-        
+        throw error
+
     }
 }

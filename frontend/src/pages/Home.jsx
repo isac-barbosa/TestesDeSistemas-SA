@@ -8,11 +8,11 @@ function Home() {
     const navigate = useNavigate()
 
     const [notebooks, setNotebooks] = useState([])
-
     const [search, setSearch] = useState("")
     const [priceFilter, setPriceFilter] = useState("")
     const [notebookSelecionado, setNotebookSelecionado] = useState(null)
     const [mostrarModal, setMostrarModal] = useState(false)
+
     const [marca, setMarca] = useState("")
     const [modelo, setModelo] = useState("")
     const [preco, setPreco] = useState("")
@@ -21,7 +21,6 @@ function Home() {
     const [imagem, setImagem] = useState("")
     const [editarNotebookId, setEditarNotebookId] = useState(null)
 
-
     useEffect(() => {
         getNotebooks()
     }, [])
@@ -29,12 +28,10 @@ function Home() {
     async function getNotebooks() {
         try {
             const response = await api.get("/notebooks")
-            console.log(response.data)
-
-            setNotebooks(response.data)
-
+            setNotebooks(response.data || [])
         } catch (error) {
             console.log(error)
+            setNotebooks([])
         }
     }
 
@@ -43,37 +40,42 @@ function Home() {
         e.preventDefault()
 
         if (!marca || !modelo || !preco || !estoque) {
-
             alert("Preencha todos os campos")
-
             return
+        }
+
+        const notebookData = {
+            marca,
+            modelo,
+            preco: Number(preco),
+            estoque: Number(estoque),
+            descricao,
+            imagem
         }
 
         try {
 
-            const notebookData = {
-                marca,
-                modelo,
-                preco: Number(preco),
-                estoque: Number(estoque),
-                descricao,
-                imagem
-            }
-
-            // UPDATE
             if (editarNotebookId) {
 
-                await api.put(
-                    `/notebooks/${editarNotebookId}`,
-                    notebookData
-                )
+                await api.put(`/notebooks/${editarNotebookId}`, notebookData)
+                const resposta = await api.get(`/notebooks/${editarNotebookId}`)
+
+                console.log("Notebook após atualizar:", resposta.data)
+
+                await getNotebooks()
+
+                await getNotebooks()
+
+                setMarca("")
+                setModelo("")
+                setPreco("")
+                setEstoque("")
+                setDescricao("")
+                setImagem("")
+                setEditarNotebookId(null)
 
                 alert("Notebook atualizado!")
-
-            }
-
-            // CREATE
-            else {
+            } else {
 
                 await api.post(
                     "/notebooks",
@@ -84,7 +86,6 @@ function Home() {
 
             }
 
-            // limpa estados
             setMarca("")
             setModelo("")
             setPreco("")
@@ -93,64 +94,43 @@ function Home() {
             setImagem("")
             setEditarNotebookId(null)
 
-            getNotebooks()
+            await getNotebooks()
 
         } catch (error) {
-
             console.log(error)
-
         }
     }
+
     function handleEditNotebook(notebook) {
 
         setEditarNotebookId(notebook.id)
-
         setMarca(notebook.marca)
         setModelo(notebook.modelo)
         setPreco(notebook.preco)
         setEstoque(notebook.estoque)
         setDescricao(notebook.descricao)
-        setImagem(notebook.imagem)
+        setImagem(notebook.imagem || "")
 
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
     }
-    async function handleDeleteNotebook(id) {
 
+    async function handleDeleteNotebook(id) {
         try {
+            console.log("ID recebido:", id)
             await api.delete(`/notebooks/${id}`)
 
             alert("Notebook deletado com sucesso!")
-            getNotebooks()
+
+            await getNotebooks()
 
         } catch (error) {
+            console.log("DELETE executado")
             console.log(error)
         }
     }
-
-    const filteredNotebooks = Array.isArray(notebooks)
-        ? notebooks.filter((notebook) => {
-
-            const matchesName =
-                notebook.modelo
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-                ||
-
-                notebook.marca
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-            const matchesPrice =
-                priceFilter
-                    ? Number(notebook.preco) <= Number(priceFilter)
-                    : true
-
-            return matchesName && matchesPrice
-
-        })
-        : []
-
-    console.log(marca)
 
 
     function handleViewNotebook(notebook) {
@@ -160,8 +140,6 @@ function Home() {
 
     }
 
-
-
     function handleLogout() {
 
         const confirmar = window.confirm(
@@ -169,12 +147,25 @@ function Home() {
         )
 
         if (confirmar) {
-
             navigate("/")
-
         }
 
     }
+
+    const filteredNotebooks = notebooks.filter((notebook) => {
+
+        const matchesName =
+            notebook.modelo.toLowerCase().includes(search.toLowerCase()) ||
+            notebook.marca.toLowerCase().includes(search.toLowerCase())
+
+        const matchesPrice =
+            priceFilter === ""
+                ? true
+                : Number(notebook.preco) <= Number(priceFilter)
+
+        return matchesName && matchesPrice
+
+    })
 
     return (
 
@@ -198,16 +189,23 @@ function Home() {
             </nav>
 
             <div className="main-content">
+
                 <div className="left-content">
+
                     <div className="title">
+
                         <h2>
                             Encontre o <span>notebook ideal</span>
                         </h2>
+
                         <p>
                             Pesquise e filtre os melhores notebooks disponíveis
                         </p>
+
                     </div>
+
                     <div className="filters">
+
                         <input
                             type="text"
                             placeholder="Pesquisar por modelo..."
@@ -221,66 +219,84 @@ function Home() {
                             value={priceFilter}
                             onChange={(e) => setPriceFilter(e.target.value)}
                         />
+
                     </div>
+
                     <div className="cards-container">
-                        {
-                            filteredNotebooks.map((notebook) => (
-                                <div className="card" key={notebook.id}>
-                                    <img
-                                        src={
-                                            notebook.imagem ||
-                                            "https://via.placeholder.com/300x200?text=Notebook"
-                                        }
-                                        alt={notebook.modelo}
-                                    />
-                                    <div className="card-content">
-                                        <h3>
-                                            {notebook.modelo}
-                                        </h3>
-                                        <p>
-                                            Marca: {notebook.marca}
-                                        </p>
-                                        <p className="price">
-                                            R$ {notebook.preco}
-                                        </p>
 
-                                        <button
-                                            className="view-btn"
-                                            onClick={() => handleViewNotebook(notebook)}
-                                        >
-                                            Ver Mais
-                                        </button>
+                        {filteredNotebooks.map((notebook) => (
 
+                            <div
+                                className="card"
+                                key={notebook.id}
+                            >
 
-                                        <button
-                                            className="edit-btn"
-                                            onClick={() => handleEditNotebook(notebook)}
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() =>
-                                                handleDeleteNotebook(notebook.id)
-                                            }
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
+                                <img
+                                    src={
+                                        notebook.imagem ||
+                                        "https://via.placeholder.com/300x200?text=Notebook"
+                                    }
+                                    alt={notebook.modelo}
+                                />
+
+                                <div className="card-content">
+
+                                    <h3>{notebook.modelo}</h3>
+
+                                    <p>Marca: {notebook.marca}</p>
+
+                                    <p className="price">
+                                        R$ {notebook.preco}
+                                    </p>
+
+                                    <button
+                                        className="view-btn"
+                                        onClick={() => handleViewNotebook(notebook)}
+                                    >
+                                        Ver Mais
+                                    </button>
+
+                                    <button
+                                        className="edit-btn"
+                                        data-testid={`edit-${notebook.id}`}
+                                        onClick={() => handleEditNotebook(notebook)}
+                                    >
+                                        Editar
+                                    </button>
+
+                                    <button
+                                        className="delete-btn"
+                                        data-testid={`delete-${notebook.id}`}
+                                        onClick={() => handleDeleteNotebook(notebook.id)}
+                                    >
+                                        Excluir
+                                    </button>
+
                                 </div>
-                            ))
-                        }
+
+                            </div>
+
+                        ))}
+
                     </div>
+
                 </div>
+
                 <div className="register-section">
+
                     <h2>
-                        Cadastrar Notebook
+                        {editarNotebookId
+                            ? "Editar Notebook"
+                            : "Cadastrar Notebook"}
                     </h2>
+
                     <form
                         className="register-form"
                         onSubmit={handleCreateNotebook}
                     >
+
                         <input
+                            data-testid="notebook-marca"
                             type="text"
                             placeholder="Marca"
                             value={marca}
@@ -288,6 +304,7 @@ function Home() {
                         />
 
                         <input
+                            data-testid="notebook-modelo"
                             type="text"
                             placeholder="Modelo"
                             value={modelo}
@@ -295,6 +312,7 @@ function Home() {
                         />
 
                         <input
+                            data-testid="notebook-preco"
                             type="number"
                             placeholder="Preço"
                             value={preco}
@@ -302,6 +320,7 @@ function Home() {
                         />
 
                         <input
+                            data-testid="notebook-estoque"
                             type="number"
                             placeholder="Estoque"
                             value={estoque}
@@ -309,91 +328,85 @@ function Home() {
                         />
 
                         <textarea
+                            data-testid="notebook-descricao"
                             placeholder="Descrição"
                             value={descricao}
                             onChange={(e) => setDescricao(e.target.value)}
-                        ></textarea>
+                        />
 
                         <input
+                            data-testid="notebook-imagem"
                             type="text"
                             placeholder="URL da imagem"
                             value={imagem}
                             onChange={(e) => setImagem(e.target.value)}
                         />
 
-
-                        <button type="submit">
-                            {
-                                editarNotebookId
-                                    ? "Salvar Alterações"
-                                    : "Cadastrar Notebook"
-                            }
+                        <button
+                            data-testid="notebook-submit"
+                            type="submit"
+                        >
+                            {editarNotebookId
+                                ? "Salvar Alterações"
+                                : "Cadastrar Notebook"}
                         </button>
+
                     </form>
+
                 </div>
+
             </div>
 
-            {
-                mostrarModal && notebookSelecionado && (
+            {mostrarModal && notebookSelecionado && (
+
+                <div
+                    className="modal-overlay"
+                    onClick={() => setMostrarModal(false)}
+                >
 
                     <div
-                        className="modal-overlay"
-                        onClick={() => setMostrarModal(false)}
+                        className="modal-content"
+                        onClick={(e) => e.stopPropagation()}
                     >
 
-                        <div
-                            className="modal-content"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <img
+                            src={
+                                notebookSelecionado.imagem ||
+                                "https://via.placeholder.com/600x400?text=Notebook"
+                            }
+                            alt={notebookSelecionado.modelo}
+                        />
 
-                            <img
-                                src={notebookSelecionado.imagem}
-                                alt={notebookSelecionado.modelo}
-                            />
+                        <h2>{notebookSelecionado.modelo}</h2>
 
-                            <h2>
-                                {notebookSelecionado.modelo}
-                            </h2>
+                        <p>
+                            <strong>Marca:</strong> {notebookSelecionado.marca}
+                        </p>
 
-                            <p>
-                                <strong>Marca:</strong>
-                                {" "}
-                                {notebookSelecionado.marca}
-                            </p>
+                        <p>
+                            <strong>Preço:</strong> R$ {notebookSelecionado.preco}
+                        </p>
 
-                            <p>
-                                <strong>Preço:</strong>
-                                {" "}
-                                R$ {notebookSelecionado.preco}
-                            </p>
+                        <p>
+                            <strong>Estoque:</strong> {notebookSelecionado.estoque}
+                        </p>
 
-                            <p>
-                                <strong>Estoque:</strong>
-                                {" "}
-                                {notebookSelecionado.estoque}
-                            </p>
+                        <p>
+                            <strong>Descrição:</strong> {notebookSelecionado.descricao}
+                        </p>
 
-                            <p>
-                                <strong>Descrição:</strong>
-                                {" "}
-                                {notebookSelecionado.descricao}
-                            </p>
-
-                            <button
-                                onClick={() => setMostrarModal(false)}
-                            >
-                                Fechar
-                            </button>
-
-                        </div>
+                        <button onClick={() => setMostrarModal(false)}>
+                            Fechar
+                        </button>
 
                     </div>
 
-                )
-            }
+                </div>
 
+            )}
 
         </div>
+
     )
 }
 
