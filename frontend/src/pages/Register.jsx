@@ -12,17 +12,13 @@ function Register() {
     const navigate = useNavigate()
 
     async function handleRegister(e) {
-
         e.preventDefault()
-
         try {
-
             const response = await api.post("/usuarios", {
                 nome,
                 email,
                 senha
             })
-
             alert(response.data.message || "Usuário cadastrado com sucesso!")
 
             navigate("/")
@@ -32,13 +28,10 @@ function Register() {
             console.log(error)
 
             alert("Erro ao cadastrar usuário")
-
         }
-
     }
 
     return (
-
         <div className="login-container">
 
             <form

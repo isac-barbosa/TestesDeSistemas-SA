@@ -34,11 +34,8 @@ function Home() {
             setNotebooks([])
         }
     }
-
     async function handleCreateNotebook(e) {
-
         e.preventDefault()
-
         if (!marca || !modelo || !preco || !estoque) {
             alert("Preencha todos os campos")
             return
@@ -61,11 +58,7 @@ function Home() {
                 const resposta = await api.get(`/notebooks/${editarNotebookId}`)
 
                 console.log("Notebook após atualizar:", resposta.data)
-
                 await getNotebooks()
-
-                await getNotebooks()
-
                 setMarca("")
                 setModelo("")
                 setPreco("")
@@ -76,14 +69,11 @@ function Home() {
 
                 alert("Notebook atualizado!")
             } else {
-
                 await api.post(
                     "/notebooks",
                     notebookData
                 )
-
                 alert("Notebook cadastrado!")
-
             }
 
             setMarca("")
@@ -100,7 +90,6 @@ function Home() {
             console.log(error)
         }
     }
-
     function handleEditNotebook(notebook) {
 
         setEditarNotebookId(notebook.id)
@@ -131,15 +120,12 @@ function Home() {
             console.log(error)
         }
     }
-
-
     function handleViewNotebook(notebook) {
 
         setNotebookSelecionado(notebook)
         setMostrarModal(true)
 
     }
-
     function handleLogout() {
 
         const confirmar = window.confirm(
@@ -151,7 +137,6 @@ function Home() {
         }
 
     }
-
     const filteredNotebooks = notebooks.filter((notebook) => {
 
         const matchesName =
@@ -164,48 +149,35 @@ function Home() {
                 : Number(notebook.preco) <= Number(priceFilter)
 
         return matchesName && matchesPrice
-
     })
-
     return (
 
         <div className="home-container">
-
             <nav className="navbar">
-
                 <div className="logo">
                     <h1>
                         Tech <span>Wave</span>
                     </h1>
                 </div>
-
                 <button
                     className="logout-btn"
                     onClick={handleLogout}
                 >
                     Sair
                 </button>
-
             </nav>
 
             <div className="main-content">
-
                 <div className="left-content">
-
                     <div className="title">
-
                         <h2>
                             Encontre o <span>notebook ideal</span>
                         </h2>
-
                         <p>
                             Pesquise e filtre os melhores notebooks disponíveis
                         </p>
-
                     </div>
-
                     <div className="filters">
-
                         <input
                             type="text"
                             placeholder="Pesquisar por modelo..."
@@ -219,18 +191,14 @@ function Home() {
                             value={priceFilter}
                             onChange={(e) => setPriceFilter(e.target.value)}
                         />
-
                     </div>
 
                     <div className="cards-container">
-
                         {filteredNotebooks.map((notebook) => (
-
                             <div
                                 className="card"
                                 key={notebook.id}
                             >
-
                                 <img
                                     src={
                                         notebook.imagem ||
@@ -238,7 +206,6 @@ function Home() {
                                     }
                                     alt={notebook.modelo}
                                 />
-
                                 <div className="card-content">
 
                                     <h3>{notebook.modelo}</h3>
@@ -271,15 +238,11 @@ function Home() {
                                     >
                                         Excluir
                                     </button>
-
                                 </div>
-
                             </div>
-
                         ))}
 
                     </div>
-
                 </div>
 
                 <div className="register-section">
