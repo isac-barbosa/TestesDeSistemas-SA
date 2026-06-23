@@ -14,6 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  
 
   fullyParallel: false,
 
@@ -23,7 +24,7 @@ export default defineConfig({
 
   workers: 1,
 
-  reporter: 'html',
+  reporter:'html',
 
   use: {
     trace: 'on-first-retry',

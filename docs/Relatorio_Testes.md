@@ -12,7 +12,7 @@
 * Playwright
 * Jest
 * Node.js
-
+npx playwright test
 ---
 
 # 8. Descritivo de Casos de Teste de Software
